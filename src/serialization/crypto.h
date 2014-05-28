@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "serialization.h"
 #include "debug_archive.h"
 #include "crypto/chacha8.h"
