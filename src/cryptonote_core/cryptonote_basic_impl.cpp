@@ -33,8 +33,49 @@ namespace cryptonote {
     return CRYPTONOTE_MAX_TX_SIZE;
   }
   //-----------------------------------------------------------------------------------------------
-  bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t &reward) {
-    uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> EMISSION_SPEED_FACTOR;
+  #define DIFF_SHIFT (40)
+  int64_t plog2fix (uint64_t x, size_t precision = DIFF_SHIFT)
+  {
+    x = x << precision;
+    int64_t b = 1LLU << (precision - 1);
+    int64_t y = 0;
+
+    if (precision < 1 || precision > 63) {
+      errno = EINVAL;
+      return INT64_MAX; // indicates an error
+    }
+
+    if (x == 0) 
+      return INT64_MIN; // represents negative infinity
+
+    while (x < 1LLU << precision) {
+      x <<= 1;
+      y -= 1LLU << precision;
+    }
+
+    while (x >= 2LLU << precision) {
+      x >>= 1;
+      y += 1LLU << precision;
+    }
+
+    __uint128_t z = x;
+
+    for (size_t i = 0; i < precision; i++) {
+      z = z * z >> precision;
+      if (z >= 2LLU << precision) {
+        z >>= 1;
+        y += b;
+      }
+      b >>= 1;
+    }
+
+    return y;
+  }  
+  //-----------------------------------------------------------------------------------------------
+  bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t &reward, const difficulty_type diff) {
+    assert(diff != 0);
+    //uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> EMISSION_SPEED_FACTOR;
+    uint64_t base_reward = plog2fix(diff);
 
     //make it soft
     if (median_size < CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE) {

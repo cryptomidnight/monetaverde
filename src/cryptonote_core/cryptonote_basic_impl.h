@@ -7,6 +7,7 @@
 #include "cryptonote_basic.h"
 #include "crypto/crypto.h"
 #include "crypto/hash.h"
+#include "cryptonote_core/difficulty.h"
 
 
 namespace cryptonote {
@@ -38,7 +39,7 @@ namespace cryptonote {
   /************************************************************************/
   size_t get_max_block_size();
   size_t get_max_tx_size();
-  bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t &reward);
+  bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t &reward, const difficulty_type diff);
   uint8_t get_account_address_checksum(const public_address_outer_blob& bl);
   std::string get_account_address_as_str(const account_public_address& adr);
   bool get_account_address_from_str(uint64_t& prefix, account_public_address& adr, const std::string& str);

@@ -55,7 +55,9 @@ namespace cryptonote
     return true;
   }
   //---------------------------------------------------------------
-  bool construct_miner_tx(size_t height, size_t median_size, uint64_t already_generated_coins, size_t current_block_size, uint64_t fee, const account_public_address &miner_address, transaction& tx, const blobdata& extra_nonce, size_t max_outs) {
+  bool construct_miner_tx(size_t height, size_t median_size, uint64_t already_generated_coins, size_t current_block_size, uint64_t fee, const account_public_address &miner_address, transaction& tx, const blobdata& extra_nonce, size_t max_outs, const difficulty_type diff) {
+    CHECK_AND_ASSERT_MES(diff > 0, false, "construct_miner_tx called with diff == 0");
+
     tx.vin.clear();
     tx.vout.clear();
     tx.extra.clear();
@@ -70,7 +72,7 @@ namespace cryptonote
     in.height = height;
 
     uint64_t block_reward;
-    if(!get_block_reward(median_size, current_block_size, already_generated_coins, block_reward))
+    if(!get_block_reward(median_size, current_block_size, already_generated_coins, block_reward, diff))
     {
       LOG_PRINT_L0("Block is too big");
       return false;
@@ -670,12 +672,13 @@ namespace cryptonote
 
     account_public_address ac = boost::value_initialized<account_public_address>();
     std::vector<size_t> sz;
-    construct_miner_tx(0, 0, 0, 0, 0, ac, bl.miner_tx); // zero fee in genesis
+    construct_miner_tx(0, 0, 0, 0, 0, ac, bl.miner_tx, blobdata(), 1, 1); // zero fee in genesis
     blobdata txb = tx_to_blob(bl.miner_tx);
     std::string hex_tx_represent = string_tools::buff_to_hex_nodelimer(txb);
+    //std::cout << hex_tx_represent << std::endl;
 
     //hard code coinbase tx in genesis block, because "tru" generating tx use random, but genesis should be always the same
-    std::string genesis_coinbase_tx_hex = "013c01ff0001ffffffffff7f029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd0880712101837e6089a1bc90a77253e38ac12bcb870b6ae354389794ec18dab07f3424339f";
+    std::string genesis_coinbase_tx_hex = "013c01ff00002101adbdf85760b40afe1ad59cb6f8c662d3ae9acebba81e4da755a76e6306be99cc";
 
     blobdata tx_bl;
     string_tools::parse_hexstr_to_binbuff(genesis_coinbase_tx_hex, tx_bl);

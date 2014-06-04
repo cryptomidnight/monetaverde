@@ -47,4 +47,4 @@ add_dependencies(simplewallet version)
 
 set_property(TARGET common crypto cryptonote_core rpc wallet PROPERTY FOLDER "libs")
 set_property(TARGET daemon simplewallet connectivity_tool minerc simpleminer PROPERTY FOLDER "prog")
-set_property(TARGET daemon PROPERTY OUTPUT_NAME "fantomcoind")
+set_property(TARGET daemon PROPERTY OUTPUT_NAME "monetaverded")
