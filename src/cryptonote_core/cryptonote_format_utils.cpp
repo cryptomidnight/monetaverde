@@ -678,7 +678,7 @@ namespace cryptonote
     //std::cout << hex_tx_represent << std::endl;
 
     //hard code coinbase tx in genesis block, because "tru" generating tx use random, but genesis should be always the same
-    std::string genesis_coinbase_tx_hex = "013c01ff00002101adbdf85760b40afe1ad59cb6f8c662d3ae9acebba81e4da755a76e6306be99cc";
+    std::string genesis_coinbase_tx_hex = "013c01ff00002101274a48ea82cb5d54547e6dd7ed87af943761d82c9050f60f56da4a7e71baa2f5";
 
     blobdata tx_bl;
     string_tools::parse_hexstr_to_binbuff(genesis_coinbase_tx_hex, tx_bl);

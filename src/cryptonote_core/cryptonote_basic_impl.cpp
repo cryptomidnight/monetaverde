@@ -33,49 +33,45 @@ namespace cryptonote {
     return CRYPTONOTE_MAX_TX_SIZE;
   }
   //-----------------------------------------------------------------------------------------------
-  #define DIFF_SHIFT (40)
-  int64_t plog2fix (uint64_t x, size_t precision = DIFF_SHIFT)
+  namespace
   {
-    x = x << precision;
-    int64_t b = 1LLU << (precision - 1);
-    int64_t y = 0;
+    const size_t log_fix_precision = 20;
+    static_assert(1 <= log_fix_precision && log_fix_precision < sizeof(uint64_t) * 8 / 2 - 1, "Invalid log precision");
 
-    if (precision < 1 || precision > 63) {
-      errno = EINVAL;
-      return INT64_MAX; // indicates an error
-    }
+    uint64_t log2_fix(uint64_t x)
+    {
+      assert(x != 0);
 
-    if (x == 0) 
-      return INT64_MIN; // represents negative infinity
+      uint64_t b = UINT64_C(1) << (log_fix_precision - 1);
+      uint64_t y = 0;
 
-    while (x < 1LLU << precision) {
-      x <<= 1;
-      y -= 1LLU << precision;
-    }
-
-    while (x >= 2LLU << precision) {
-      x >>= 1;
-      y += 1LLU << precision;
-    }
-
-    __uint128_t z = x;
-
-    for (size_t i = 0; i < precision; i++) {
-      z = z * z >> precision;
-      if (z >= 2LLU << precision) {
-        z >>= 1;
-        y += b;
+      while (x >= (UINT64_C(2) << log_fix_precision))
+      {
+        x >>= 1;
+        y += UINT64_C(1) << log_fix_precision;
       }
-      b >>= 1;
-    }
 
-    return y;
-  }  
+      // 64 bits are enough, because of x < 2 * (1 << log_fix_precision) <= 2^32
+      uint64_t z = x;
+      for (size_t i = 0; i < log_fix_precision; i++)
+      {
+        z = (z * z) >> log_fix_precision;
+        if (z >= (UINT64_C(2) << log_fix_precision))
+        {
+          z >>= 1;
+          y += b;
+        }
+        b >>= 1;
+      }
+
+      return y;
+    }
+  }
   //-----------------------------------------------------------------------------------------------
   bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t &reward, const difficulty_type diff) {
     assert(diff != 0);
-    //uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> EMISSION_SPEED_FACTOR;
-    uint64_t base_reward = plog2fix(diff);
+    assert(static_cast<uint64_t>(diff) < (UINT64_C(1) << (sizeof(uint64_t) * 8 - log_fix_precision)));
+    uint64_t base_reward = log2_fix(diff << log_fix_precision) << 20;
 
     //make it soft
     if (median_size < CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE) {

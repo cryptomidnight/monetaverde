@@ -8,7 +8,7 @@
 #define CRYPTONOTE_MAX_BLOCK_SIZE                       500000000  // block header blob limit, never used!
 #define CRYPTONOTE_MAX_TX_SIZE                          1000000000
 #define CRYPTONOTE_PUBLIC_ADDRESS_TEXTBLOB_VER          0
-#define CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX         0xAC // addresses start with "2"
+#define CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX         0x1A2B // addresses start with "Vd"
 #define CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW            60
 #define CURRENT_TRANSACTION_VERSION                     1
 #define CURRENT_BLOCK_MAJOR_VERSION                     2
@@ -73,7 +73,7 @@
 #define P2P_DEFAULT_PING_CONNECTION_TIMEOUT             2000       //2 seconds
 #define P2P_DEFAULT_INVOKE_TIMEOUT                      60*2*1000  //2 minutes
 #define P2P_DEFAULT_HANDSHAKE_INVOKE_TIMEOUT            5000       //5 seconds
-#define P2P_STAT_TRUSTED_PUB_KEY                        "8fabf9a5a434a9f1510d13336ab8abbfee9c918ce505efe2fd5dab94d045fa115"
+#define P2P_STAT_TRUSTED_PUB_KEY                        "db9eabe971890012a4071a96468155c2c360f80d18e73caa97bffd3b7381eed7" 
 #define P2P_DEFAULT_WHITELIST_CONNECTIONS_PERCENT       70
 
 #define ALLOW_DEBUG_COMMANDS
