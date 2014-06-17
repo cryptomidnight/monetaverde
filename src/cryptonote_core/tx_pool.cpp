@@ -421,6 +421,9 @@ bool tx_memory_pool::fill_block_template(block &bl, size_t median_size, uint64_t
       fee += tx.second.fee;
       append_key_images(k_images, tx.second.tx);
     }
+
+    return true;
+  }
   //---------------------------------------------------------------------------------
   bool tx_memory_pool::init(const std::string& config_folder)
   {
